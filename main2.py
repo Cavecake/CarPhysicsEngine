@@ -70,7 +70,7 @@ class Car():
         self.move() #Move the Car
         
         local_velocity = self.rotation_matrix(self.velocity,self.direction) # Convert the velocity to another reference system
-        print(local_velocity)
+        #print(local_velocity)
         local_velocity = self.add_acceleration(local_velocity,time)# Accelerating/Decelerating the car
         self.calc_gravity(time)# Calculating the gravity
         local_velocity = self.calc_friction(local_velocity)
