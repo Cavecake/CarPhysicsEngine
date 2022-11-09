@@ -6,17 +6,17 @@ from math import cos, sin, pi, atan, sqrt
 import matplotlib.pyplot as plt
 ##### This part isn't explained here, I haven't understood it yet #####
 GRAVITY = 9.81
-MASS = 1200
-CGToFront = 2.0*10
-CGToBack = 2.0*10
-cgToFrontAxle = 1.25*10
-cgToBackAxle = 1.25*10
+MASS = 120
+CGToFront = 2.0
+CGToBack = 2.0
+cgToFrontAxle = 1.25
+cgToBackAxle = 1.25
 CGHeight = 0.55
 wheelRadius = 0.3
 tireGrip = 2
 lockGrip = 0.7
-engineForce = 8000
-brakeForce = 12000
+engineForce = 800
+brakeForce = 1200
 weightTransfer = 0.2
 maxSteer = 0.6
 cornerStiffnesFront = 5
@@ -43,10 +43,12 @@ labels = ["steerAngle","steer",
             "accel_c.x", "accel_c.y",
             "yawSpeed.Front", "yawSpeed.Rear",
             "slipAngle.Front","slipAngle.Rear",
-            "Friction.Front", "Friction.Rear"]
-blacklist = ["steerAngle","steer","velocity_c.x","velocity_c.y",
-"accel_c.x","accel_c.y","Friction.Front", "Friction.Rear"]
-withelist = []#["slipAngle.Front","slipAngle.Rear","heading","yawRate"]
+            "Friction.Front", "Friction.Rear",
+            "TF_X", "TF_Y"]
+blacklist = ["steerAngle","steer","TF_X","accel_c.x", "accel_c.y"]
+#blacklist = ["steerAngle","steer","velocity_c.x","velocity_c.y",
+#"accel_c.x","accel_c.y","Friction.Front", "Friction.Rear"]
+withelist = []#"Friction.Front","slipAngle.Front","velocity_c.x","velocity_c.y","TF_X","TF_Y"]#["slipAngle.Front","slipAngle.Rear","heading","yawRate"]
 class Data():
     steerAngle = [0]
     steer = [0]
@@ -57,6 +59,7 @@ class Data():
     yawSpeed = [[0],[0]]
     slipAngle = [[0],[0]]
     Friction = [[0],[0]]
+    total = [[0],[0]]
     def append_(self,data):
         self.steerAngle.append(data[0])
         self.steer.append(data[1])
@@ -76,8 +79,12 @@ class Data():
         self.slipAngle[0].append(data[7][0])
         self.slipAngle[1].append(data[7][1])
 
-        self.Friction[0].append(data[8][0]/MASS)
-        self.Friction[1].append(data[8][1]/MASS)
+        self.Friction[0].append(data[8][0])
+        self.Friction[1].append(data[8][1])
+        
+        self.total[0].append(data[9])
+        self.total[1].append(data[10])
+
     def getData(self):
         data = [
             self.steerAngle,self.steer,
@@ -87,7 +94,8 @@ class Data():
             self.accel_c[0], self.accel_c[1],
             self.yawSpeed[0], self.yawSpeed[1],
             self.slipAngle[0],self.slipAngle[1],
-            self.Friction[0], self.Friction[1]
+            self.Friction[0], self.Friction[1],
+            self.total[0],self.total[1]
         ]
         return data
 
@@ -105,11 +113,14 @@ class Plot():
     def show(self,end = False):
         data_ = self.data.getData()
         for i, element in enumerate(data_):
-            if labels[i] in blacklist:
-                continue
+            
             if len(withelist) !=0:
                 if not labels[i] in withelist:
+                    
                     continue
+            elif labels[i] in blacklist:
+                continue
+            print(labels[i],element)
             plt.plot(self.times,element,label = labels[i])
         plt.legend()
         if end:
@@ -172,6 +183,7 @@ class Car():
 
         totalForce_x = tractionForce
         totalForce_y = cos(self.steerAngle) * FrictionFront + FrictionRear
+        angularTorque = cos(self.steerAngle)*FrictionFront*CGToFront -  FrictionRear*CGToBack
 
         self.accel_c = [totalForce_x/MASS,totalForce_y/MASS]
         
@@ -193,8 +205,7 @@ class Car():
         self.velocity[0] += accel[0]*dt
         self.velocity[1] += accel[1]*dt
 
-        angularTorque = cos(self.steerAngle)*FrictionFront*CGToFront -  FrictionRear*CGToBack
-
+        
         angularAccel = angularTorque/INERTIA
 
         self.yawRate += angularAccel*dt
@@ -212,7 +223,8 @@ class Car():
             self.yawRate,
             [yawSpeedFront,yawSpeedRear],
             [slipAngleFront,slipAngleRear],
-            [FrictionFront,FrictionRear]
+            [FrictionFront,FrictionRear],
+            totalForce_x, totalForce_y
         ]
         data_plot.update(data,dt,False)
         #print(self.velocity)
@@ -274,24 +286,26 @@ class Game():
         counter = 0
         
         while self.running:
-            self.car.update(0.001)
+            self.car.update(0.03)
             self.event_Handling(pygame.event.get())
             self.update()
-            if False:
+            if True:
                 if counter == 0:
                     self.car.throttle = 1
                 counter +=1
                 if counter == 30:
                     self.car.throttle = 0
                     self.car.steer = 1
-                if counter == 30*10:
+                if counter == 30+1:
                     self.car.steer = 0
-                if counter == 30*20:
+                if counter == 30+2:
                     
                     while True:
                         data_plot.show(True)
+                        break
                         time.sleep(10)
+                    quit(0)
             else:
-                time.sleep(0.001) # I know that pygame has a clock, and it would probably be more elegant to use it
+                time.sleep(0.03) # I know that pygame has a clock, and it would probably be more elegant to use it
 game = Game()
 game.main()
