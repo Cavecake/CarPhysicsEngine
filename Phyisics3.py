@@ -6,7 +6,7 @@ from math import cos, sin, pi, atan, sqrt
 import matplotlib.pyplot as plt
 ##### This part isn't explained here, I haven't understood it yet #####
 GRAVITY = 9.81
-MASS = 120
+MASS = 1200
 CGToFront = 2.0
 CGToBack = 2.0
 cgToFrontAxle = 1.25
@@ -15,8 +15,8 @@ CGHeight = 0.55
 wheelRadius = 0.3
 tireGrip = 2
 lockGrip = 0.7
-engineForce = 800
-brakeForce = 1200
+engineForce = 8000
+brakeForce = 12000
 weightTransfer = 0.2
 maxSteer = 0.6
 cornerStiffnesFront = 5
@@ -45,7 +45,7 @@ labels = ["steerAngle","steer",
             "slipAngle.Front","slipAngle.Rear",
             "Friction.Front", "Friction.Rear",
             "TF_X", "TF_Y"]
-blacklist = ["steerAngle","steer","TF_X","accel_c.x", "accel_c.y"]
+blacklist = ["TF_X", "TF_Y"]#["steerAngle","steer","TF_X","accel_c.x", "accel_c.y"]
 #blacklist = ["steerAngle","steer","velocity_c.x","velocity_c.y",
 #"accel_c.x","accel_c.y","Friction.Front", "Friction.Rear"]
 withelist = []#"Friction.Front","slipAngle.Front","velocity_c.x","velocity_c.y","TF_X","TF_Y"]#["slipAngle.Front","slipAngle.Rear","heading","yawRate"]
@@ -289,7 +289,7 @@ class Game():
             self.car.update(0.03)
             self.event_Handling(pygame.event.get())
             self.update()
-            if True:
+            if False:
                 if counter == 0:
                     self.car.throttle = 1
                 counter +=1
@@ -305,6 +305,22 @@ class Game():
                         break
                         time.sleep(10)
                     quit(0)
+            if True:
+                if counter == 0:
+                    self.car.throttle = 1
+                counter +=1
+                if counter == 30:
+                    self.car.throttle = 0
+                    self.car.steer = 1
+                if counter == 30*10:
+                    self.car.steer = 0
+                if counter == 30*20:
+                    while True:
+                        data_plot.show(True)
+                        break
+                        time.sleep(10)
+                    quit(0)
+                #time.sleep(0.03)
             else:
                 time.sleep(0.03) # I know that pygame has a clock, and it would probably be more elegant to use it
 game = Game()

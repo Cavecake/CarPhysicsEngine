@@ -283,6 +283,6 @@ class Game():
                 while True:
                     data_plot.show(True)
                     time.sleep(10)
-            time.sleep(0.03) # I know that pygame has a clock, and it would probably be more elegant to use it
+            #time.sleep(0.03) # I know that pygame has a clock, and it would probably be more elegant to use it
 game = Game()
 game.main()

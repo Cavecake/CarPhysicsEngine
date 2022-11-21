@@ -44,7 +44,7 @@ labels = ["steerAngle","steer",
             "yawSpeed.Front", "yawSpeed.Rear",
             "slipAngle.Front","slipAngle.Rear",
             "Friction.Front", "Friction.Rear"]
-blacklist = ["steerAngle","steer","velocity_c.x","velocity_c.y","accel_c.x"]
+blacklist = []#"steerAngle","steer","velocity_c.x","velocity_c.y","accel_c.x"]
 withelist = ["slipAngle.Front","slipAngle.Rear","heading","yawRate"]
 class Data():
     steerAngle = [0]
@@ -272,7 +272,7 @@ class Game():
             self.car.update(0.03)
             self.event_Handling(pygame.event.get())
             self.update()
-            if False:
+            if True:
                 counter +=1
                 if counter == 30:
                     self.car.throttle = 0
@@ -284,6 +284,6 @@ class Game():
                     while True:
                         data_plot.show(True)
                         time.sleep(10)
-            time.sleep(0.03) # I know that pygame has a clock, and it would probably be more elegant to use it
+            #time.sleep(0.03) # I know that pygame has a clock, and it would probably be more elegant to use it
 game = Game()
 game.main()

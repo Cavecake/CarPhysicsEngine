@@ -127,13 +127,28 @@ class Game():
             self.update()
             
             time.sleep(0.03) # I know that pygame has a clock, and it would probably be more elegant to use it
+import matplotlib.pyplot as plt
 def test():
-    for angle in range(1,91):
+    
+    for angle in range(1,91,5):
+        times = [0]
+        element = [1]
         car = Car()
         car.accelerate(1)
         a = car.update(0.03)
-        car.steer(angle)
-        a = car.update(0.03)
-        #print((a/1)**90/angle)
-        print((a/1)**90)
+        for i in range(round(360/angle)):
+            
+            car.steer(angle)
+            a = car.update(0.03)
+            times.append(i*angle)
+            element.append(a)
+        #print((a/1)**90)
+        times.append((i+1)*angle)
+        element.append(a)
+        plt.plot(times,element)
+
+    plt.legend()
+
+    plt.show(block = True)
+
 test()
