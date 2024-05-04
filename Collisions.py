@@ -1,6 +1,4 @@
-import math
 import time
-from grpc import access_token_call_credentials
 import pygame
 from math import cos, sin, pi, atan, sqrt
 import matplotlib.pyplot as plt
